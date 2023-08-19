@@ -6,9 +6,4 @@ FUNCTIONS = {
     '0': 'Выход',
 }
 
-METHODS = {
-    '1': 'run',
-    '2': 'create_note',
-    '3': 'update_note',
-    '4': 'read_note',
-}
+PAGE_SIZE = 2
