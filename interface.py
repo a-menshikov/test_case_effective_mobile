@@ -81,7 +81,18 @@ class Interface():
         print('Запись изменена\n')
 
     def search_note(self):
-        pass
+        print('Ввод параметров для поиска')
+        print(
+            'Если параметров несколько, вводите через знак ";" без пробелов'
+        )
+        params = input('\nВведите строку: ').split(';')
+        print()
+        search_result = self.repo.search_note(params)
+        if len(search_result) == 0:
+            print('Ничего не нашлось\n')
+            return
+        for note in search_result:
+            print(note)
 
     def stop(self):
         print('Телефонный справочник завершает работу\n')

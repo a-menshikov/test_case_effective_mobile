@@ -1,5 +1,4 @@
 from models import Note
-import os
 from itertools import islice
 from config import PAGE_SIZE
 
@@ -9,9 +8,6 @@ class PhoneBookRepository:
         self.file_path: str = 'phone_book.txt'
         self.current_id: int = self.count_notes() + 1
         self.page_size: int = PAGE_SIZE
-
-    def delete_book(self):
-        os.remove(self.file_path)
 
     def post_note(self, note: Note):
         with open(self.file_path, 'a') as file:
@@ -50,3 +46,15 @@ class PhoneBookRepository:
         data[id - 1] = str(id) + ' | ' + str(note)
         with open(self.file_path, 'w') as file:
             file.writelines(data)
+
+    def search_note(self, query: list[str]) -> list[str] | str:
+        with open(self.file_path, 'r') as file:
+            data = file.readlines()
+            result = []
+            for line in data:
+                note = line.strip()
+                if all(
+                    query[i] in note.split(' | ') for i in range(len(query))
+                ):
+                    result.append(note)
+            return result
