@@ -35,10 +35,10 @@ class Interface():
             work_phone=params['Рабочий телефон'],
             personal_phone=params['Личный телефон'],
         )
-        self.repo.write_note(note)
+        self.repo.post_note(note)
         print('Запись добавлена\n')
 
-    def read_book(self):
+    def read_page(self):
         count_notes = self.repo.count_notes()
         if count_notes % self.repo.page_size:
             count_pages = count_notes // self.repo.page_size + 1
@@ -52,8 +52,39 @@ class Interface():
         if num_page > count_pages or num_page < 1:
             print('Такой страницы не существует\n')
             return
-        for note in self.repo.read_page(num_page):
+        for note in self.repo.get_page(num_page):
             print(note)
+
+    def edit_note(self):
+        num = int(input('Введите номер записи для редактирования: '))
+        note = self.repo.get_note(num)
+        new_params = {}
+        for key, value in note.as_dict().items():
+            print(f'\nЗначение поля {key} сейчас: {value}')
+            input_text = input(
+                'Введите новое значение или оставьте пустым, чтобы пропустить:'
+            )
+            if input_text == '':
+                new_params[key] = value
+            else:
+                # тут будет валидация
+                new_params[key] = input_text
+        new_note = Note(
+            last_name=new_params['Фамилия'],
+            first_name=new_params['Имя'],
+            patronymic=new_params['Отчество'],
+            organization=new_params['Организация'],
+            work_phone=new_params['Рабочий телефон'],
+            personal_phone=new_params['Личный телефон'],
+        )
+        self.repo.patch_note(new_note, num)
+        print('Запись изменена\n')
+
+    def search_note(self):
+        pass
+
+    def stop(self):
+        print('Телефонный справочник завершает работу\n')
 
     def run(self):
         print('Телефонный справочник запущен\n')
@@ -63,9 +94,13 @@ class Interface():
             self.all_commands()
             command = input('Введите id команды: ')
             if command == '0':
-                print('Телефонный справочник завершает работу\n')
+                self.stop()
                 break
             if command == '1':
-                self.read_book()
+                self.read_page()
             if command == '2':
                 self.create_note()
+            if command == '3':
+                self.edit_note()
+            if command == '4':
+                self.search_note()
