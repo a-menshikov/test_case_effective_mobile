@@ -39,14 +39,23 @@ class Interface():
         print('Запись добавлена\n')
 
     def read_book(self):
-        print(f'Количество записей: {self.repo.count_notes()}\n')
+        count_notes = self.repo.count_notes()
+        if count_notes % self.repo.page_size:
+            count_pages = count_notes // self.repo.page_size + 1
+        else:
+            count_pages = count_notes // self.repo.page_size
+        print(f'\nКоличество записей: {count_notes}')
         print(f'Размер страницы: {self.repo.page_size}')
-        # тут будет валидация
+        print(f'Страниц в справочнике: {count_pages}\n')
         num_page = int(input('Введите номер страницы: '))
-        self.repo.read_page(num_page)
+        print()
+        if num_page > count_pages or num_page < 1:
+            print('Такой страницы не существует\n')
+            return
+        for note in self.repo.read_page(num_page):
+            print(note)
 
     def run(self):
-        # self.repo.delete_book()  # TODO: потом удалить строку
         print('Телефонный справочник запущен\n')
 
         while True:
