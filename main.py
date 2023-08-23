@@ -1,7 +1,8 @@
 from interface import Interface
 
 
-def main():
+def main() -> None:
+    """Основная функция."""
     interface = Interface()
     interface.run()
 

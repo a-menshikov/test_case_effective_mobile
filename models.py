@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Note():
+    """Запись в телефонной книге."""
 
     last_name: str
     first_name: str
@@ -11,7 +12,20 @@ class Note():
     work_phone: str
     personal_phone: str
 
+    @classmethod
+    def empty_data_model(cls) -> dict[str, str]:
+        """Получить словарь с каркасом модели."""
+        return {
+            'Фамилия': '',
+            'Имя': '',
+            'Отчество': '',
+            'Организация': '',
+            'Рабочий телефон': '',
+            'Личный телефон': '',
+        }
+
     def as_dict(self) -> dict[str, str]:
+        """Получить словарь с данными экземпляра модели."""
         return {
             'Фамилия': self.last_name,
             'Имя': self.first_name,
@@ -22,6 +36,7 @@ class Note():
         }
 
     def __str__(self) -> str:
+        """Строковое представление экземпляра модели."""
         return (
             f'{self.last_name} | {self.first_name} | {self.patronymic} | '
             f'{self.organization} | {self.work_phone} | '
