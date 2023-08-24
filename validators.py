@@ -25,7 +25,7 @@ def validate_personal_phone(value: str) -> None:
         raise ValueError("Некорректное значение личного телефона")
 
 
-validator_map = {
+validator_map: dict[str, callable] = {
     "last_name": validate_name,
     "first_name": validate_name,
     "patronymic": validate_name,
