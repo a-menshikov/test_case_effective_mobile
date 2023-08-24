@@ -1,5 +1,6 @@
 from itertools import islice
 
+from config import FILE_PATH, PAGE_SIZE
 from models import Note
 
 
@@ -7,9 +8,9 @@ class PhoneBookRepository:
     """Репозиторий телефонной книги."""
 
     def __init__(self) -> None:
-        self.file_path: str = 'phone_book.txt'
+        self.file_path: str = FILE_PATH
         self.current_id: int = self.count_notes() + 1
-        self.page_size: int = 10
+        self.page_size: int = PAGE_SIZE
 
     def post_note(self, note: Note) -> None:
         """Добавление записи."""

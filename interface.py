@@ -1,3 +1,4 @@
+from config import COMMANDS
 from models import Note
 from repository import PhoneBookRepository
 
@@ -6,43 +7,28 @@ class Interface():
     """Клиентский интерфейс."""
 
     def __init__(self) -> None:
-        self.commands: dict[str, str] = {
-            '1': 'Вывести справочник',
-            '2': 'Добавить запись',
-            '3': 'Редактировать запись',
-            '4': 'Найти запись',
-            '0': 'Выход',
-        }
-        self.methods: dict[str, callable] = {
-            '1': self.read_page,
-            '2': self.create_note,
-            '3': self.edit_note,
-            '4': self.search_note,
-            '0': self.stop,
-        }
+        self.commands = COMMANDS
         self.repo: PhoneBookRepository = PhoneBookRepository()
 
     def all_commands(self) -> None:
         """Вывести список доступных команд."""
         for id, command in self.commands.items():
-            print(f'{id}. {command}')
+            print(f'{id}. {command[1]}')
         print()
 
     def create_note(self):
         """Добавить запись."""
         params = Note.empty_data_model()
+        print()
         for param in params:
             input_text = input(f'Заполните поле {param}: ')
-            # тут будет валидация
             params[param] = input_text
-        note = Note(
-            last_name=params['Фамилия'],
-            first_name=params['Имя'],
-            patronymic=params['Отчество'],
-            organization=params['Организация'],
-            work_phone=params['Рабочий телефон'],
-            personal_phone=params['Личный телефон'],
-        )
+        try:
+            note = Note.create_object_by_runame_dict(params)
+        except ValueError as e:
+            print()
+            print(e)
+            return
         self.repo.post_note(note)
         print('Запись добавлена\n')
 
@@ -69,6 +55,7 @@ class Interface():
         num = int(input('\nВведите номер записи для редактирования: '))
         note = self.repo.get_note(num)
         new_params = {}
+        print()
         for key, value in note.as_dict().items():
             print(f'\nЗначение поля {key} сейчас: {value}')
             input_text = input(
@@ -77,16 +64,13 @@ class Interface():
             if input_text == '':
                 new_params[key] = value
             else:
-                # тут будет валидация
                 new_params[key] = input_text
-        new_note = Note(
-            last_name=new_params['Фамилия'],
-            first_name=new_params['Имя'],
-            patronymic=new_params['Отчество'],
-            organization=new_params['Организация'],
-            work_phone=new_params['Рабочий телефон'],
-            personal_phone=new_params['Личный телефон'],
-        )
+        try:
+            new_note = Note.create_object_by_runame_dict(new_params)
+        except ValueError as e:
+            print()
+            print(e)
+            return
         self.repo.patch_note(new_note, num)
         print('\nЗапись изменена')
 
@@ -107,7 +91,7 @@ class Interface():
 
     def command_router(self, command_key: str) -> None:
         """Обработка id команды."""
-        command = self.methods[command_key]
+        command = getattr(self, self.commands[command_key][0])
         command()
 
     def stop(self) -> None:
