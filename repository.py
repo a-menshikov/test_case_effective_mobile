@@ -34,6 +34,8 @@ class PhoneBookRepository:
 
     def get_note(self, id: int) -> Note:
         """Получить запись по id."""
+        if id >= self.current_id or id < 1:
+            raise ValueError('Такой записи не существует')
         with open(self.file_path, 'r') as file:
             sliced = islice(file, id - 1, id)
             note = [note.strip().split(' | ') for note in sliced][0]
@@ -57,6 +59,8 @@ class PhoneBookRepository:
 
     def search_note(self, query: list[str]) -> list[str]:
         """Поиск записей."""
+        if all(i == '' for i in query):
+            raise ValueError('Пустой запрос')
         with open(self.file_path, 'r') as file:
             data = file.readlines()
             result = []

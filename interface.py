@@ -42,8 +42,13 @@ class Interface():
         print(f'\nКоличество записей: {count_notes}')
         print(f'Размер страницы: {self.repo.page_size}')
         print(f'Страниц в справочнике: {count_pages}\n')
-        num_page = int(input('Введите номер страницы: '))
+        num_page = input('Введите номер страницы: ')
         print()
+        try:
+            num_page = int(num_page)
+        except ValueError:
+            print('Некорректный формат номера страницы. Только целое число\n')
+            return
         if num_page > count_pages or num_page < 1:
             print('Такой страницы не существует\n')
             return
@@ -52,10 +57,19 @@ class Interface():
 
     def edit_note(self) -> None:
         """Редактировать запись."""
-        num = int(input('\nВведите номер записи для редактирования: '))
-        note = self.repo.get_note(num)
-        new_params = {}
+        num = input('\nВведите номер записи для редактирования: ')
         print()
+        try:
+            num = int(num)
+        except ValueError:
+            print('Некорректный формат id записи. Только целое число\n')
+            return
+        try:
+            note = self.repo.get_note(num)
+        except ValueError as e:
+            print(e)
+            return
+        new_params = {}
         for key, value in note.as_dict().items():
             print(f'\nЗначение поля {key} сейчас: {value}')
             input_text = input(
@@ -76,13 +90,17 @@ class Interface():
 
     def search_note(self) -> None:
         """Поиск записи."""
-        print('Ввод параметров для поиска')
+        print('\nВвод параметров для поиска')
         print(
             'Если параметров несколько, вводите через знак ";" без пробелов'
         )
         params = input('\nВведите строку: ').split(';')
         print()
-        search_result = self.repo.search_note(params)
+        try:
+            search_result = self.repo.search_note(params)
+        except ValueError as e:
+            print(e)
+            return
         if len(search_result) == 0:
             print('Ничего не нашлось\n')
             return
